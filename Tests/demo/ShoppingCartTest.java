@@ -6,7 +6,11 @@ import Classes.Item;
 import Classes.ShoppingCart;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.api.Imposteriser;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.*;
+
+import java.util.Vector;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +21,8 @@ public class ShoppingCartTest {
      ShoppingCart Cart;
     private  IPaymentStrategy Strategy;
     private  Mockery mockingContext;
+    private  Item item1;
+    private  Item item2;
 
 
     @Before
@@ -24,9 +30,24 @@ public class ShoppingCartTest {
     {
 
         mockingContext = new Mockery();
-
         Strategy= mockingContext.mock(IPaymentStrategy.class);
+        mockingContext.setImposteriser(ClassImposteriser.INSTANCE);
+        item1 = mockingContext.mock(Item.class, "item1");
+        item2 = mockingContext.mock(Item.class, "item2");
+
+        mockingContext.checking(new Expectations(){{
+            oneOf(item1).getDiscount(); will(returnValue(3));
+            oneOf(item1).getPrice(); will(returnValue(12));
+
+            oneOf(item2).getDiscount(); will(returnValue(6));
+            oneOf(item2).getPrice(); will(returnValue(24));
+
+
+
+        }});
         Cart= new ShoppingCart();
+        Cart.addItem(item1);
+        Cart.addItem(item2);
         //System.out.println("Before ALL :"+Cart.items.size());
     }
 
@@ -36,15 +57,10 @@ public class ShoppingCartTest {
 
         //System.out.println("PaY : "+Cart.items.size());
 
-        Item x= new Item("Codexcerr",52);
-        Cart.addItem(x);
-
-        Item y= new Item("Codexcerr",52);
-        Cart.addItem(y);
 
         mockingContext.checking(new Expectations(){{
 
-            oneOf(Strategy).pay(78);
+            allowing(Strategy).pay(27);
             will(returnValue(true));
 
         }});
@@ -84,9 +100,11 @@ public class ShoppingCartTest {
     @Test
     public void addItem()
     {
-        Item x= new Item("Codexcerr",13);
-        assertTrue(Cart.addItem(x));
-        //System.out.println("Size After AddItem(): "+Cart.items.size());
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+
+        assertTrue(Cart.addItem(item1));
 
     }
 
@@ -100,31 +118,31 @@ public class ShoppingCartTest {
     @Test
     public void addItem3()
     {
-        Item x= new Item("Codexcerr",52);
-        Cart.addItem(x);
-        Item x2= new Item("Codexcerr",52);
-        Cart.addItem(x2);
-        Item x3= new Item("Codexcerr",52);
-        Cart.addItem(x3);
-        Item x4= new Item("Codexcerr",52);
-        Cart.addItem(x4);
-        Item x5= new Item("Codexcerr",52);
-        Cart.addItem(x5);
+//        Item x= new Item("Codexcerr",52);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+        Cart.addItem(item1);
+//        Cart.addItem(item1);
+//        Item x2= new Item("Codexcerr",52);
+//        Item x3= new Item("Codexcerr",52);
+//        Item x6= new Item("Codexcerr",52);
+//        Item x4= new Item("Codexcerr",52);
+//        Item x5= new Item("Codexcerr",52);
+//        Item x7= new Item("Codexcerr",52);
+//        Item x8= new Item("Codexcerr",52);
+//        Item x9= new Item("Codexcerr",52);
+//        Item xx= new Item("Codexcerr",52);
 
-        Item x6= new Item("Codexcerr",52);
-        Cart.addItem(x6);
-        Item x7= new Item("Codexcerr",52);
-        Cart.addItem(x7);
-        Item x8= new Item("Codexcerr",52);
-        Cart.addItem(x8);
-        Item x9= new Item("Codexcerr",52);
-        Cart.addItem(x9);
-        Item xx= new Item("Codexcerr",52);
-        Cart.addItem(xx);
+//        Item y= new Item("Codexcerr",52);
 
-        Item y= new Item("Codexcerr",52);
-
-        assertFalse(Cart.addItem(y));
+        assertFalse(Cart.addItem(item1));
         //System.out.println("Size After AddItem(): "+Cart.items.size());
 
     }
@@ -136,10 +154,10 @@ public class ShoppingCartTest {
     public void removeItem()
     {
 
-        Item x= new Item("Codexcerr",13);
-        Cart.addItem(x);
-        Cart.removeItem(x);
-        assertEquals("Remove one item",0,0);
+//        Item x= new Item("Codexcerr",13);
+
+        Cart.removeItem(item1);
+        assertEquals("Remove one item",1,1);
 
     }
 
@@ -148,9 +166,9 @@ public class ShoppingCartTest {
     public void calculateTotalPrice()
     {
 
-        Item x= new Item("Codexcerr",13);
-        Cart.addItem(x);
-        assertEquals(13,Cart.calculateTotalPrice());
+//        Item x= new Item("Codexcerr",13);
+//        Cart.addItem(x);
+        assertEquals(36,Cart.calculateTotalPrice());
 
     }
 
@@ -169,9 +187,9 @@ public class ShoppingCartTest {
     @Test
     public void calculateTotalDiscount()
     {
-        Item x= new Item("Codexcerr",20);
-        Cart.addItem(x);
-        assertEquals(5,Cart.calculateTotalDiscount());
+
+//        Item x= new Item("Codexcerr",20);
+        assertEquals(9,Cart.calculateTotalDiscount());
 
     }
 
